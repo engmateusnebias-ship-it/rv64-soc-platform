@@ -2,84 +2,99 @@
 
 [![CI](https://github.com/engmateusnebias-ship-it/rv64-soc-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/engmateusnebias-ship-it/rv64-soc-platform/actions/workflows/ci.yml)
 
-RV64GC SoC built with Rocket Chip and Chisel — targeting OpenSBI + Linux boot,
-TileLink interconnect, and professional verification via UVM and Cocotb.
+A parametric RV64GC SoC platform demonstrating end-to-end competency
+across RTL generation, professional verification, and full software stack
+integration.
 
 ## Architecture
-
-```
+                    rv64-soc-platform
 ┌─────────────────────────────────────────────────────┐
-│                  RV64GC SoC                         │
 │                                                     │
-│  ┌──────────────┐   TileLink   ┌─────────────────┐  │
-│  │  Rocket Core │◄────────────►│  L2 Cache /     │  │
-│  │  (RV64GC)    │              │  Memory XBAR    │  │
-│  │  M/S/U Mode  │              └────────┬────────┘  │
-│  └──────────────┘                       │           │
-│                              ┌──────────┼──────┐    │
-│                              ▼          ▼      ▼    │
-│                            DRAM       CLINT   PLIC  │
-│                            CTRL       UART    GPIO  │
+│   Rocket Core (RV64GC)          L1 I$ / D$ 32KB    │
+│   M / S / U privilege modes     4-way set assoc.   │
+│                                                     │
+│              TileLink (TL-UL / TL-UH / TL-C)        │
+│   ┌──────────────────────────────────────────┐      │
+│   │           Crossbar (XBAR)                │      │
+│   └───┬──────────┬──────────┬───────┬────────┘      │
+│       │          │          │       │               │
+│     DRAM       CLINT       PLIC   UART/SPI/GPIO     │
+│   0x8000_0000 0x0200_0000 0x0C00_0000 0x1000_0000  │
 └─────────────────────────────────────────────────────┘
-```
 
-## Memory Map
+## Stack
 
-| Base Address   | Size   | Device          |
-|----------------|--------|-----------------|
-| `0x0000_0000`  | 64 KiB | Boot ROM        |
-| `0x0200_0000`  | 64 KiB | CLINT           |
-| `0x0C00_0000`  | 4 MiB  | PLIC            |
-| `0x1000_0000`  | 4 KiB  | UART 16550      |
-| `0x8000_0000`  | 1 GiB  | DRAM            |
+| Layer              | Technology                          |
+|--------------------|-------------------------------------|
+| RTL generator      | Rocket Chip (chipsalliance/master)  |
+| HDL                | Chisel 6.7.0 + firtool 1.144.0      |
+| Build tool         | Mill 0.11.7                         |
+| Language           | Scala 2.13                          |
+| JDK                | OpenJDK 21                          |
+| Simulation         | Verilator 5.x                       |
+| Integration tests  | Cocotb (Python)                     |
+| Protocol verif.    | UVM (SystemVerilog IEEE 1800.2)     |
+| ISA verification   | riscv-formal + SAIL golden model    |
+| Firmware           | OpenSBI (M-Mode)                    |
+| OS                 | Linux kernel (RISC-V)               |
+| Userspace          | BusyBox                             |
 
-## Boot Sequence
+## Memory map
 
-```
-ZSBL (Boot ROM)
-  └─► OpenSBI (M-Mode firmware)
-        └─► Linux kernel (S-Mode)
-              └─► BusyBox init (U-Mode)
-```
+| Base address   | Size   | Peripheral     |
+|----------------|--------|----------------|
+| `0x0000_0000`  | 64 KB  | Boot ROM       |
+| `0x0200_0000`  | 64 KB  | CLINT          |
+| `0x0C00_0000`  |  4 MB  | PLIC           |
+| `0x1000_0000`  |  4 KB  | UART 16550     |
+| `0x1000_1000`  |  4 KB  | SPI            |
+| `0x1000_2000`  |  4 KB  | GPIO (16x)     |
+| `0x8000_0000`  |  1 GB  | DRAM           |
+
+## Boot sequence
+Boot ROM (M-Mode)
+└── OpenSBI (M-Mode) — SBI calls, trap delegation
+└── Linux kernel (S-Mode) — drivers, MMU Sv39
+└── BusyBox (U-Mode) — shell, userspace
 
 ## Build
 
 ```bash
-# Requirements: JDK 21, SBT 1.10+, firtool 1.144.0, Verilator 5.x
+# Requirements: JDK 21, Mill 0.11.7, firtool 1.144.0, Verilator 5.x
 # RISC-V toolchains: riscv64-unknown-elf-gcc, riscv64-linux-gnu-gcc
 
-# Generate RTL
-sbt "runMain config.RV64SoCTop"
+# Install Mill
+curl -L https://github.com/com-lihaoyi/mill/releases/download/0.11.7/mill > mill
+chmod +x mill && sudo mv mill /usr/local/bin/mill
 
-# Run Cocotb integration tests
+# Clone with submodules
+git clone --recursive https://github.com/engmateusnebias-ship-it/rv64-soc-platform.git
+
+# Compile
+mill soc.compile
+
+# Verify SoC configuration
+mill soc.runMain config.RV64SoCTop
+
+# Run Cocotb integration tests (Phase 3)
 make -C verif/cocotb
 
-# Run UVM regression
+# Run UVM regression (Phase 7)
 make -C verif/uvm
 ```
 
 ## Status
 
-| Phase | Description                        | Status      |
-|-------|------------------------------------|-------------|
-| 1     | Environment setup                  | ✅ Complete |
-| 2     | Chisel RTL + SBT project           | 🔄 In progress |
-| 3     | Verilator + Cocotb smoke tests     | ⬜ Planned  |
-| 4     | Peripherals + Device Tree          | ⬜ Planned  |
-| 5     | OpenSBI boot                       | ⬜ Planned  |
-| 6     | Linux + BusyBox boot               | ⬜ Planned  |
-| 7     | UVM TileLink verification          | ⬜ Planned  |
-| 8     | riscv-formal ISA checking          | ⬜ Planned  |
-
-## Evolution
-
-This project builds on a handcrafted
-[RV32I core implemented in VHDL](https://github.com/engmateusnebias-ship-it/rv32i-minimal-soc),
-which established a solid understanding of pipeline stages, hazard handling,
-and instruction decoding. This SoC takes that foundation to an industrial
-level: parametric hardware generation with Rocket Chip and Chisel, a full
-privilege stack (M/S/U-Mode) running OpenSBI and Linux, TileLink as the
-system interconnect, and professional verification using UVM and Cocotb.
+| Phase | Description                        | Status         |
+|-------|------------------------------------|----------------|
+| 1     | Environment setup                  | ✅ Complete    |
+| 2     | Rocket Chip + Mill + CI            | ✅ Complete    |
+| 3     | Verilator + Cocotb smoke tests     | 🔄 In progress |
+| 4     | Peripherals + Device Tree          | ⬜ Planned     |
+| 5     | OpenSBI boot                       | ⬜ Planned     |
+| 6     | Linux + BusyBox boot               | ⬜ Planned     |
+| 7     | UVM TileLink verification          | ⬜ Planned     |
+| 8     | riscv-formal ISA checking          | ⬜ Planned     |
 
 ## License
 
