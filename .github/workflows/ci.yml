@@ -1,0 +1,60 @@
+name: CI
+
+on:
+  push:
+    branches: [ master, main ]
+  pull_request:
+    branches: [ master, main ]
+
+jobs:
+  build:
+    name: Compile and generate RTL
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+
+      - name: Cache SBT
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.sbt
+            ~/.ivy2/cache
+            ~/.cache/coursier
+          key: ${{ runner.os }}-sbt-${{ hashFiles('**/build.sbt') }}
+          restore-keys: |
+            ${{ runner.os }}-sbt-
+
+      - name: Install firtool 1.144.0
+        run: |
+          wget -q https://github.com/llvm/circt/releases/download/firtool-1.144.0/firrtl-bin-linux-x64.tar.gz
+          tar xzf firrtl-bin-linux-x64.tar.gz
+          echo "$HOME/firtool-1.144.0/bin" >> $GITHUB_PATH
+
+      - name: Verify firtool
+        run: firtool --version
+
+      - name: Compile Chisel sources
+        run: sbt compile
+
+      - name: Generate RTL
+        run: sbt "runMain CounterGen"
+
+      - name: Verify RTL was generated
+        run: |
+          ls -la generated/
+          test -f generated/Counter.sv && echo "RTL generation: OK"
+
+      - name: Upload generated RTL
+        uses: actions/upload-artifact@v4
+        with:
+          name: generated-rtl
+          path: generated/
+          retention-days: 7

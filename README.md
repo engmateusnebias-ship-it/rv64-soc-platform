@@ -1,5 +1,7 @@
 # rv64-soc-platform
 
+[![CI](https://github.com/engmateusnebias-ship-it/rv64-soc-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/engmateusnebias-ship-it/rv64-soc-platform/actions/workflows/ci.yml)
+
 RV64GC SoC built with Rocket Chip and Chisel — targeting OpenSBI + Linux boot,
 TileLink interconnect, and professional verification via UVM and Cocotb.
 
