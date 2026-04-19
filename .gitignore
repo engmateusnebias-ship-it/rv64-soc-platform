@@ -1,0 +1,38 @@
+# SBT build artifacts
+target/
+project/target/
+project/project/
+
+# Chisel/FIRRTL generated RTL
+generated/
+
+# Metals LSP
+.metals/
+.bloop/
+.bsp/
+*.worksheet.sc
+
+# Scala IDE
+.idea/
+*.iml
+
+# Exercises (scratch work, not part of the SoC)
+src/main/scala/exercises/
+
+# Verilator simulation artifacts
+sim/obj_dir/
+*.vcd
+*.fst
+
+# Python / Cocotb
+__pycache__/
+*.pyc
+results.xml
+
+# UVM / EDA tool outputs
+verif/uvm/work/
+verif/uvm/*.log
+
+# OS
+.DS_Store
+Thumbs.db
