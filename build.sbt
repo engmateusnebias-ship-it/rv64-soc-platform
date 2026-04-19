@@ -9,6 +9,3 @@ libraryDependencies ++= Seq(
 addCompilerPlugin(
   "org.chipsalliance" %% "chisel-plugin" % chiselVersion cross CrossVersion.full
 )
-
-// firtool 1.144.0 — MLIR/CIRCT backend used by Chisel 7.x
-ThisBuild / firtoolVersion := "1.144.0"
