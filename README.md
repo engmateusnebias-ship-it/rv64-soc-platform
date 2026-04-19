@@ -19,20 +19,21 @@ frequency signal is injected via a test model — no physical hardware required.
 
 ## Architecture
 
+```
 RV64GC SoC
-┌─────────────────────────────────────────────────────┐
-│                                                     │
-│   Rocket Core (RV64GC)          L1 I$ / D$ 32KB    │
-│   M / S / U privilege modes     4-way set assoc.   │
-│                                                     │
-│              TileLink (TL-UL / TL-UH / TL-C)        │
-│   ┌──────────────────────────────────────────┐      │
-│   │           Crossbar (XBAR)                │      │
-│   └───┬──────────┬──────────┬───────┬────────┘      │
-│       │          │          │       │               │
-│     DRAM       CLINT       PLIC   UART/SPI/GPIO     │
-│   0x8000_0000 0x0200_0000 0x0C00_0000 0x1000_0000  │
-└─────────────────────────────────────────────────────┘
++--------------------------------------------------+
+|  Rocket Core (RV64GC)       L1 I$ / D$ 32KB     |
+|  M / S / U privilege modes  4-way set assoc.    |
+|                                                  |
+|         TileLink (TL-UL / TL-UH / TL-C)         |
+|  +--------------------------------------------+ |
+|  |            Crossbar (XBAR)                 | |
+|  +------+----------+----------+----------+----+ |
+|         |          |          |          |      |
+|       DRAM       CLINT       PLIC  UART/SPI/GPIO|
+|  0x8000_0000 0x0200_0000 0x0C00_0000 0x1000_0000|
++--------------------------------------------------+
+```
 
 ## Stack
 
