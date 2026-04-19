@@ -1,3 +1,7 @@
+# Mill build artifacts
+out/
+.mill-version
+
 # SBT build artifacts
 target/
 project/target/
