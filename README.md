@@ -48,8 +48,8 @@ ZSBL (Boot ROM)
 # Requirements: JDK 21, SBT 1.10+, firtool 1.144.0, Verilator 5.x
 # RISC-V toolchains: riscv64-unknown-elf-gcc, riscv64-linux-gnu-gcc
 
-# Generate RTL
-sbt "runMain config.RV64SoCTop"
+# Verify SoC configuration
+mill soc.runMain config.RV64SoCTop
 
 # Run Cocotb integration tests
 make -C verif/cocotb
