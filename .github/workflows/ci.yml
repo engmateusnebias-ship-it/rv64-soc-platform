@@ -41,17 +41,11 @@ jobs:
       - name: Verify firtool
         run: firtool --version
 
-      - name: Compile and generate RTL
-        run: sbt "compile; runMain CounterGen"
+      - name: Verify SoC configuration
+        run: sbt "runMain config.RV64SoCTop"
 
-      - name: Verify RTL was generated
+      - name: Verify memory map output
         run: |
-          ls -la generated/
-          test -f generated/Counter.sv && echo "RTL generation: OK"
-
-      - name: Upload generated RTL
-        uses: actions/upload-artifact@v4
-        with:
-          name: generated-rtl
-          path: generated/
-          retention-days: 7
+          output=$(sbt --error "runMain config.RV64SoCTop")
+          echo "$output"
+          echo "$output" | grep -q "rv64-soc-platform" && echo "Memory map: OK"
