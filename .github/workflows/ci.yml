@@ -41,11 +41,8 @@ jobs:
       - name: Verify firtool
         run: firtool --version
 
-      - name: Compile Chisel sources
-        run: sbt compile
-
-      - name: Generate RTL
-        run: sbt "runMain CounterGen"
+      - name: Compile and generate RTL
+        run: sbt "compile; runMain CounterGen"
 
       - name: Verify RTL was generated
         run: |
