@@ -16,9 +16,6 @@ generated/
 .idea/
 *.iml
 
-# Exercises (scratch work, not part of the SoC)
-src/main/scala/exercises/
-
 # Verilator simulation artifacts
 sim/obj_dir/
 *.vcd
