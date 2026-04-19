@@ -35,7 +35,7 @@ jobs:
       - name: Install firtool 1.144.0
         run: |
           wget -q https://github.com/llvm/circt/releases/download/firtool-1.144.0/firrtl-bin-linux-x64.tar.gz
-          tar xzf firrtl-bin-linux-x64.tar.gz
+          tar xzf firrtl-bin-linux-x64.tar.gz -C "$HOME"
           echo "$HOME/firtool-1.144.0/bin" >> $GITHUB_PATH
 
       - name: Verify firtool
