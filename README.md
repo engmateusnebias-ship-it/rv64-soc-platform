@@ -7,20 +7,15 @@ across RTL generation, professional verification, and full software stack
 integration.
 
 ## Architecture
-                    rv64-soc-platform
-┌─────────────────────────────────────────────────────┐
-│                                                     │
-│   Rocket Core (RV64GC)          L1 I$ / D$ 32KB    │
-│   M / S / U privilege modes     4-way set assoc.   │
-│                                                     │
-│              TileLink (TL-UL / TL-UH / TL-C)        │
-│   ┌──────────────────────────────────────────┐      │
-│   │           Crossbar (XBAR)                │      │
-│   └───┬──────────┬──────────┬───────┬────────┘      │
-│       │          │          │       │               │
-│     DRAM       CLINT       PLIC   UART/SPI/GPIO     │
-│   0x8000_0000 0x0200_0000 0x0C00_0000 0x1000_0000  │
-└─────────────────────────────────────────────────────┘
+
+| Component         | Details                              |
+|-------------------|--------------------------------------|
+| Core              | Rocket Core RV64GC, M/S/U modes      |
+| L1 caches         | 32 KB I$ + 32 KB D$, 4-way           |
+| Interconnect      | TileLink TL-UL / TL-UH / TL-C        |
+| Topology          | Parametric crossbar (XBAR)           |
+| Peripherals       | CLINT, PLIC, UART 16550, SPI, GPIO   |
+| Memory            | 1 GB DRAM @ 0x8000_0000              |
 
 ## Stack
 
@@ -52,10 +47,11 @@ integration.
 | `0x8000_0000`  |  1 GB  | DRAM           |
 
 ## Boot sequence
-Boot ROM (M-Mode)
-└── OpenSBI (M-Mode) — SBI calls, trap delegation
-└── Linux kernel (S-Mode) — drivers, MMU Sv39
-└── BusyBox (U-Mode) — shell, userspace
+
+1. **Boot ROM** (M-Mode) — minimal startup, jumps to OpenSBI
+2. **OpenSBI** (M-Mode) — SBI calls, interrupt delegation, trap handler
+3. **Linux kernel** (S-Mode) — MMU Sv39, drivers: PLIC, CLINT, UART
+4. **BusyBox** (U-Mode) — shell and userspace utilities
 
 ## Build
 
