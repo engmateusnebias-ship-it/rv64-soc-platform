@@ -65,11 +65,14 @@ RV64GC SoC
 | `0x8000_0000`  |  1 GB  | DRAM           |
 
 ## Boot sequence
+
+```
 ZSBL (Boot ROM)
-└── OpenSBI (M-Mode firmware)
-└── Linux kernel (S-Mode)
-└── BusyBox init (U-Mode)
-└── freq-monitor (U-Mode application)
+  |-- OpenSBI (M-Mode firmware)
+        |-- Linux kernel (S-Mode)
+              |-- BusyBox init (U-Mode)
+                    |-- freq-monitor (U-Mode application)
+```
 
 ## Build
 
