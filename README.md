@@ -2,9 +2,7 @@
 
 [![CI](https://github.com/engmateusnebias-ship-it/rv64-soc-platform/actions/workflows/ci.yml/badge.svg)](https://github.com/engmateusnebias-ship-it/rv64-soc-platform/actions/workflows/ci.yml)
 
-A parametric RV64GC SoC platform demonstrating end-to-end competency
-across RTL generation, professional verification, and full software stack
-integration.
+A parametric RV64GC SoC platform demonstrating end-to-end competency across RTL generation, professional verification, and full software stack integration.
 
 ## Architecture
 
@@ -38,59 +36,63 @@ integration.
 
 | Base address   | Size   | Peripheral     |
 |----------------|--------|----------------|
-| `0x0000_0000`  | 64 KB  | Boot ROM       |
-| `0x0200_0000`  | 64 KB  | CLINT          |
-| `0x0C00_0000`  |  4 MB  | PLIC           |
-| `0x1000_0000`  |  4 KB  | UART 16550     |
-| `0x1000_1000`  |  4 KB  | SPI            |
-| `0x1000_2000`  |  4 KB  | GPIO (16x)     |
-| `0x8000_0000`  |  1 GB  | DRAM           |
+| 0x0000_0000    | 64 KB  | Boot ROM       |
+| 0x0200_0000    | 64 KB  | CLINT          |
+| 0x0C00_0000    |  4 MB  | PLIC           |
+| 0x1000_0000    |  4 KB  | UART 16550     |
+| 0x1000_1000    |  4 KB  | SPI            |
+| 0x1000_2000    |  4 KB  | GPIO (16x)     |
+| 0x8000_0000    |  1 GB  | DRAM           |
 
 ## Boot sequence
 
-1. **Boot ROM** (M-Mode) — minimal startup, jumps to OpenSBI
-2. **OpenSBI** (M-Mode) — SBI calls, interrupt delegation, trap handler
-3. **Linux kernel** (S-Mode) — MMU Sv39, drivers: PLIC, CLINT, UART
-4. **BusyBox** (U-Mode) — shell and userspace utilities
+1. Boot ROM (M-Mode) — minimal startup, jumps to OpenSBI
+2. OpenSBI (M-Mode) — SBI calls, interrupt delegation, trap handler
+3. Linux kernel (S-Mode) — MMU Sv39, drivers: PLIC, CLINT, UART
+4. BusyBox (U-Mode) — shell and userspace utilities
 
 ## Build
 
-```bash
-# Requirements: JDK 21, Mill 0.11.7, firtool 1.144.0, Verilator 5.x
-# RISC-V toolchains: riscv64-unknown-elf-gcc, riscv64-linux-gnu-gcc
+Requirements: JDK 21, Mill 0.11.7, firtool 1.144.0, Verilator 5.x
+RISC-V toolchains: riscv64-unknown-elf-gcc, riscv64-linux-gnu-gcc
 
-# Install Mill
-curl -L https://github.com/com-lihaoyi/mill/releases/download/0.11.7/mill > mill
-chmod +x mill && sudo mv mill /usr/local/bin/mill
+Install Mill:
 
-# Clone with submodules
-git clone --recursive https://github.com/engmateusnebias-ship-it/rv64-soc-platform.git
+    curl -L https://github.com/com-lihaoyi/mill/releases/download/0.11.7/mill > mill
+    chmod +x mill && sudo mv mill /usr/local/bin/mill
 
-# Compile
-mill soc.compile
+Clone with submodules:
 
-# Verify SoC configuration
-mill soc.runMain config.RV64SoCTop
+    git clone --recursive https://github.com/engmateusnebias-ship-it/rv64-soc-platform.git
 
-# Run Cocotb integration tests (Phase 3)
-make -C verif/cocotb
+Compile:
 
-# Run UVM regression (Phase 7)
-make -C verif/uvm
-```
+    mill soc.compile
+
+Verify SoC configuration:
+
+    mill soc.runMain config.RV64SoCTop
+
+Run Cocotb integration tests (Phase 3):
+
+    make -C verif/cocotb
+
+Run UVM regression (Phase 7):
+
+    make -C verif/uvm
 
 ## Status
 
 | Phase | Description                        | Status         |
 |-------|------------------------------------|----------------|
-| 1     | Environment setup                  | ✅ Complete    |
-| 2     | Rocket Chip + Mill + CI            | ✅ Complete    |
-| 3     | Verilator + Cocotb smoke tests     | 🔄 In progress |
-| 4     | Peripherals + Device Tree          | ⬜ Planned     |
-| 5     | OpenSBI boot                       | ⬜ Planned     |
-| 6     | Linux + BusyBox boot               | ⬜ Planned     |
-| 7     | UVM TileLink verification          | ⬜ Planned     |
-| 8     | riscv-formal ISA checking          | ⬜ Planned     |
+| 1     | Environment setup                  | Complete       |
+| 2     | Rocket Chip + Mill + CI            | Complete       |
+| 3     | Verilator + Cocotb smoke tests     | In progress    |
+| 4     | Peripherals + Device Tree          | Planned        |
+| 5     | OpenSBI boot                       | Planned        |
+| 6     | Linux + BusyBox boot               | Planned        |
+| 7     | UVM TileLink verification          | Planned        |
+| 8     | riscv-formal ISA checking          | Planned        |
 
 ## License
 
