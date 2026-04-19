@@ -1,7 +1,5 @@
 package config
 
-import chisel3._
-
 /**
  * RV64GC SoC Platform — top-level configuration parameters.
  *
@@ -13,56 +11,33 @@ import chisel3._
  */
 object SoCParameters {
 
-  // -----------------------------------------------------------------------
-  // Core
-  // -----------------------------------------------------------------------
-  val XLEN         = 64      // RV64
+  val XLEN         = 64
   val NUM_CORES    = 1
-  val RESET_VECTOR = BigInt("00001000", 16)  // Boot ROM base address
+  val RESET_VECTOR = BigInt("00001000", 16)
 
-  // -----------------------------------------------------------------------
-  // Memory map — must match dts/rv64soc.dts and sw/opensbi platform
-  // -----------------------------------------------------------------------
   val BOOT_ROM_BASE = BigInt("00000000", 16)
-  val BOOT_ROM_SIZE = BigInt("00010000", 16)  // 64 KB
-
+  val BOOT_ROM_SIZE = BigInt("00010000", 16)
   val CLINT_BASE    = BigInt("02000000", 16)
-  val CLINT_SIZE    = BigInt("00010000", 16)  // 64 KB
-
+  val CLINT_SIZE    = BigInt("00010000", 16)
   val PLIC_BASE     = BigInt("0C000000", 16)
-  val PLIC_SIZE     = BigInt("00400000", 16)  // 4 MB
-
+  val PLIC_SIZE     = BigInt("00400000", 16)
   val UART_BASE     = BigInt("10000000", 16)
-  val UART_SIZE     = BigInt("00001000", 16)  // 4 KB
-
+  val UART_SIZE     = BigInt("00001000", 16)
   val SPI_BASE      = BigInt("10001000", 16)
-  val SPI_SIZE      = BigInt("00001000", 16)  // 4 KB
-
+  val SPI_SIZE      = BigInt("00001000", 16)
   val GPIO_BASE     = BigInt("10002000", 16)
-  val GPIO_SIZE     = BigInt("00001000", 16)  // 4 KB
+  val GPIO_SIZE     = BigInt("00001000", 16)
   val GPIO_WIDTH    = 16
-
   val DRAM_BASE     = BigInt("80000000", 16)
-  val DRAM_SIZE     = BigInt("40000000", 16)  // 1 GB
+  val DRAM_SIZE     = BigInt("40000000", 16)
 
-  // -----------------------------------------------------------------------
-  // UART
-  // -----------------------------------------------------------------------
-  val UART_CLOCK_FREQ = 50000000  // 50 MHz
-  val UART_BAUD_RATE  = 115200
-
-  // -----------------------------------------------------------------------
-  // PLIC
-  // -----------------------------------------------------------------------
-  val PLIC_NUM_SOURCES  = 32
-  val PLIC_NUM_TARGETS  = 2   // M-mode + S-mode
-
-  // -----------------------------------------------------------------------
-  // Caches (L1)
-  // -----------------------------------------------------------------------
-  val ICACHE_SIZE_KB = 32
-  val DCACHE_SIZE_KB = 32
-  val CACHE_WAYS     = 4
+  val UART_CLOCK_FREQ  = 50000000
+  val UART_BAUD_RATE   = 115200
+  val PLIC_NUM_SOURCES = 32
+  val PLIC_NUM_TARGETS = 2
+  val ICACHE_SIZE_KB   = 32
+  val DCACHE_SIZE_KB   = 32
+  val CACHE_WAYS       = 4
 }
 
 /**
